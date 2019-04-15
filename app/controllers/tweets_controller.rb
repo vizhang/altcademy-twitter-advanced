@@ -11,6 +11,10 @@ class TweetsController < ApplicationController
     @tweet = user.tweets.new(tweet_params)
 
     if @tweet.save
+      if @tweet.image.attached?
+        TweetMailer.notify(@tweet).deliver!
+      end
+
       render 'tweets/create'
     end
   end
@@ -47,6 +51,6 @@ class TweetsController < ApplicationController
   private
 
     def tweet_params
-      params.require(:tweet).permit(:message)
+      params.require(:tweet).permit(:message, :image)
     end
 end
